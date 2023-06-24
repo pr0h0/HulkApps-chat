@@ -2,11 +2,21 @@ import { useEffect, useState } from "react";
 import { Socket, io } from "socket.io-client";
 import { Nullable } from "../types/Other";
 
+let socketInstance: Nullable<Socket> = null;
+let socketStartedInitialization = false;
+
 const useSocket = () => {
-  const [socket, setSocket] = useState<Nullable<Socket>>(null);
+  const [socket, setSocket] = useState(socketInstance);
 
   useEffect(() => {
-    const socket = io("http://localhost:3000/", {
+    if (socketStartedInitialization) {
+      setSocket(socketInstance);
+      return;
+    }
+
+    socketStartedInitialization = true;
+
+    const localSocket = io("http://localhost:3000/", {
       reconnection: true,
       reconnectionAttempts: 5,
       auth: {
@@ -14,20 +24,24 @@ const useSocket = () => {
       },
     });
 
-    socket.on("connect", () => {
+    localSocket.on("connect", () => {
       console.log("connected");
     });
 
-    socket.on("disconnect", () => {
+    localSocket.on("disconnect", () => {
       console.log("disconnected");
+      setTimeout(() => {
+        localSocket.connect();
+      }, 1000);
     });
 
-    setSocket(socket);
+    socketInstance = localSocket;
+    setSocket(localSocket);
 
     return () => {
-      socket.disconnect();
+      localSocket.disconnect();
     };
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return socket;
 };

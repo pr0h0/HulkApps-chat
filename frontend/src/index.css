@@ -15,4 +15,15 @@ body,
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  background-color: #234;
+}
+
+#root * {
+  color: #fff;
+}
+
+.notification-dark,
+.notification-dark * {
+  background-color: #333 !important;
+  color: #fff !important;
 }

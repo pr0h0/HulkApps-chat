@@ -8,6 +8,7 @@ function errorHandler(err, req, res, next) {
       data: err.data,
     });
   } else {
+    console.error(err);
     res.jsonError({
       status: 500,
       msg: err.message,

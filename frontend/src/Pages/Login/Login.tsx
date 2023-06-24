@@ -1,21 +1,12 @@
 import { FormEvent, useRef } from "react";
-import Form from "../../Components/Reusable/Form";
-import Input from "../../Components/Reusable/Input";
-import Button from "../../Components/Reusable/Button";
+
 import Navbar from "../../Components/Navbar/Navbar";
-import Wrapper from "../../Components/Reusable/Wrapper";
 import { userService } from "../../services/user.service";
-import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
-import { setUser } from "../../redux/reducers/user";
-import Title from "../../Components/Reusable/Title";
 import HelperService from "../../services/helper.service";
-import client from "../../utils/client.axios";
+import { styled } from "styled-components";
 
 const Login = () => {
   const formRef = useRef<HTMLFormElement>(null);
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,7 +34,7 @@ const Login = () => {
   };
 
   return (
-    <Wrapper direction="column" flex="1">
+    <Wrapper>
       <Navbar />
       <Form ref={formRef} onSubmit={handleSubmit}>
         <Title>Login</Title>
@@ -56,3 +47,50 @@ const Login = () => {
 };
 
 export default Login;
+
+const Wrapper = styled.div`
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+`;
+
+const Form = styled.form`
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+`;
+
+const Input = styled.input`
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  outline: none;
+  font-size: 1rem;
+  background-color: #456;
+  color: #fff;
+  &::placeholder {
+    color: #ccc;
+  }
+`;
+
+const Button = styled.button`
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background-color: #000;
+  color: #fff;
+  cursor: pointer;
+`;
+
+const Title = styled.h1`
+  font-size: 2rem;
+  text-align: center;
+  margin-bottom: 1rem;
+`;

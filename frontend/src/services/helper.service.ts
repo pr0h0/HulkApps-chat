@@ -5,6 +5,7 @@ class HelperService {
     notification.success({
       message: title,
       description: message,
+      className: "notification-dark",
     });
   }
 
@@ -12,6 +13,7 @@ class HelperService {
     notification.error({
       message: title,
       description: message,
+      className: "notification-dark",
     });
   }
 
@@ -19,6 +21,7 @@ class HelperService {
     notification.warning({
       message: title,
       description: message,
+      className: "notification-dark",
     });
   }
 
@@ -26,6 +29,7 @@ class HelperService {
     notification.info({
       message: title,
       description: message,
+      className: "notification-dark",
     });
   }
 
@@ -43,6 +47,23 @@ class HelperService {
     }
 
     return result;
+  }
+
+  static formatDateTime(dateStr: string) {
+    const dateObj = new Date(dateStr);
+    const [date, time] = dateObj.toISOString().split("T");
+
+    const [year, month, day] = date.split("-");
+    const [hour, minute] = time.split(":");
+
+    if (dateObj.getTime() > new Date().getTime() - 86400000) {
+      return `${hour}:${minute}`;
+    }
+
+    if (dateObj.getFullYear() === new Date().getFullYear())
+      return `${day}.${month} ${hour}:${minute}`;
+
+    return `${day}.${month}.${year} ${hour}:${minute}`;
   }
 }
 

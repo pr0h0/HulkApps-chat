@@ -1,10 +1,8 @@
+import { styled } from "styled-components";
 import { useSelector } from "react-redux";
+import { Link as RouterLink } from "react-router-dom";
+
 import { Store } from "../../types/Store";
-import Button from "../Reusable/Button";
-import Wrapper from "../Reusable/Wrapper";
-import Title from "../Reusable/Title";
-import Link from "../Reusable/Link";
-import { css } from "styled-components";
 
 const Navbar = () => {
   const user = useSelector((state: Store) => state.user);
@@ -26,9 +24,7 @@ const Navbar = () => {
     );
   } else {
     content.push(
-      <Title key={2} size="h2">
-        {user.username}
-      </Title>,
+      <Title key={2}>{user.username}</Title>,
       <Button key={3} onClick={handleLogout}>
         Logout
       </Button>
@@ -36,10 +32,8 @@ const Navbar = () => {
   }
 
   return (
-    <Wrapper direction="row" justify="flex-end" align="center" css={wrapperCss}>
-      <Title size="h1" css={titleCss}>
-        Chat App
-      </Title>
+    <Wrapper>
+      <Title>Chat App</Title>
       {content}
     </Wrapper>
   );
@@ -47,13 +41,42 @@ const Navbar = () => {
 
 export default Navbar;
 
-const wrapperCss = css`
-  border-bottom: 1px solid #000;
-  ${Title.Component} {
-    margin-right: auto;
-  }
+const Wrapper = styled.nav`
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 1rem;
+  border-bottom: 1px solid #ccc;
 `;
 
-const titleCss = css`
+const Title = styled.h1`
+  font-size: 1.5rem;
   flex: 1;
+  text-aling: left;
+`;
+
+const Link = styled(RouterLink)`
+  text-decoration: none;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid #ccc;
+  transition: all 0.2s ease-in-out;
+  margin: 0 0.5rem;
+`;
+
+const Button = styled.button`
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background-color: #000;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  margin: 0 0.5rem;
 `;
