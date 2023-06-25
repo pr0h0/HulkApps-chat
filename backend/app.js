@@ -3,6 +3,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const logger = require("morgan");
 const cors = require("cors");
+const debug = require("debug")("backend:server");
 
 const jsonResponseMiddleware = require("./middlewares/json-response.middleware");
 const errorHandler = require("./utils/errorHandler");
@@ -24,7 +25,7 @@ if (process.env.NODE_ENV === "development") {
   );
 }
 
-app.use(logger("dev"));
+app.use(logger("dev", { stream: { write: (msg) => debug(msg) } }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());

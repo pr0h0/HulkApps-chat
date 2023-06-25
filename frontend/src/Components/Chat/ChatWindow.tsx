@@ -210,7 +210,7 @@ const Label = styled.label`
   &:hover {
     transform: scale(1.1);
   }
-  &[for=chat-list-switch] {
+  &[for="chat-list-switch"] {
     right: unset;
     left: 0rem;
   }

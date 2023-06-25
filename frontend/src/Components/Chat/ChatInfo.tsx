@@ -78,9 +78,9 @@ const Wrapper = styled.div`
     background-color: #234;
     z-index: 101;
   }
-  `;
+`;
 
-  const Title = styled.h1`
+const Title = styled.h1`
   font-size: 1.5rem;
   padding: 0 1rem;
   text-align: center;

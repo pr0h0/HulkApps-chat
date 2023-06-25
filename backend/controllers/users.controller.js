@@ -12,7 +12,7 @@ module.exports = {
 async function register(req, res) {
   const { username, password } = req.body;
 
-  if(!username || !password || !username.trim()) {
+  if (!username || !password || !username.trim()) {
     return res.jsonError({
       msg: "Username and password are required",
     });

@@ -171,7 +171,11 @@ const ChatList = () => {
             <Section className="create-new-group">
               <List as={"form"} onSubmit={handleCreateOrJoinGroup}>
                 <ListItem>
-                  <input type="text" placeholder="Group name" name="group-name" />
+                  <input
+                    type="text"
+                    placeholder="Group name"
+                    name="group-name"
+                  />
                 </ListItem>
                 <ListItem>
                   <input type="submit" value="Create / Join" />

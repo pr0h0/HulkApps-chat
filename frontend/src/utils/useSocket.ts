@@ -5,7 +5,8 @@ import { Nullable } from "../types/Other";
 let socketInstance: Nullable<Socket> = null;
 let socketStartedInitialization = false;
 
-const socketUrl = import.meta.env.VITE_API_URL as string || "http://localhost:3000/";
+const socketUrl =
+  (import.meta.env.VITE_API_URL as string) || "http://localhost:3000/";
 
 const useSocket = () => {
   const [socket, setSocket] = useState(socketInstance);
