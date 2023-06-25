@@ -18,6 +18,8 @@ const Register = () => {
       password: string;
     };
 
+    if(!data.username || !data.password) return HelperService.showError("Please fill all fields");
+
     const { status, data: res } = await userService.register(
       data.username,
       data.password

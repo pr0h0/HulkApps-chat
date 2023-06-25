@@ -38,7 +38,7 @@ const ChatInfo = () => {
 
   return (
     <>
-      <Input type="checkbox" id="chat-info-switch" />
+      <Input type="checkbox" id="chat-info-switch" defaultChecked={false} />
       <Wrapper>
         <Title>Chat info</Title>
         <List>
@@ -66,16 +66,26 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-width: 200px;
-  width: 200px;
+  min-width: 250px;
+  width: 25%;
   border-left: 1px solid #ccc;
-  padding-top: 5rem;
-`;
+  @media screen and (max-width: 900px) {
+    position: fixed;
+    top: 60px;
+    right: 0;
+    width: min(400px, calc(100vw - 4rem));
+    height: calc(100% - 60px);
+    background-color: #234;
+    z-index: 101;
+  }
+  `;
 
-const Title = styled.h1`
+  const Title = styled.h1`
   font-size: 1.5rem;
   padding: 0 1rem;
   text-align: center;
+  padding-block: 1rem;
+  border-bottom: 1px solid #fff;
 `;
 
 const Input = styled.input`

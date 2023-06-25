@@ -72,8 +72,12 @@ module.exports = function (appServer) {
     );
 
     socket.on("create-or-join-group", async (groupName, cb) => {
+      if(!groupName || !groupName.trim()) {
+        return cb({error:true, message: "Group name is required"});
+      }
+
       const conversation = await conversationService.createGroupConversation(
-        groupName,
+        groupName.toLowerCase(),
         socket.decoded.user.id
       );
 

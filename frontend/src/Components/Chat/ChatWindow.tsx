@@ -66,6 +66,9 @@ const ChatWindow = () => {
   return (
     <Wrapper>
       <Header>
+        <Label htmlFor="chat-list-switch">
+          <i className="fas fa-address-book" />
+        </Label>
         <h1>{conversationName}</h1>
         <Label htmlFor="chat-info-switch">
           <i className="fas fa-info-circle" />
@@ -111,10 +114,13 @@ const Header = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 0 1rem;
+  padding: 0 3rem;
   border-bottom: 1px solid #ccc;
+  position: relative;
   h1 {
+    width: 100%;
     font-size: 1.5rem;
+    text-align: center;
   }
 `;
 
@@ -189,13 +195,13 @@ const Button = styled.button`
 `;
 
 const Label = styled.label`
-  position: fixed;
-  top: calc(60px + 8px);
+  position: absolute;
+  top: 8px;
   right: 1rem;
   width: 3rem;
   font-size: 1.5rem;
   cursor: pointer;
-  z-index: 1;
+  z-index: 102;
   padding: 0.5rem 0;
   display: flex;
   justify-content: center;
@@ -203,5 +209,9 @@ const Label = styled.label`
   transform-origin: center;
   &:hover {
     transform: scale(1.1);
+  }
+  &[for=chat-list-switch] {
+    right: unset;
+    left: 0rem;
   }
 `;

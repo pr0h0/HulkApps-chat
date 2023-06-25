@@ -116,85 +116,88 @@ const ChatList = () => {
   };
 
   return (
-    <Wrapper>
-      <Input type="checkbox" id="private-chats-switch" />
-      <Section>
-        <Title as="label" htmlFor="private-chats-switch">
-          <span>Private</span>
-          <label htmlFor="new-private-toggle">
-            <i className="fas fa-search" />
-          </label>
-        </Title>
-        <>
-          <Input type="checkbox" id="new-private-toggle" />
-          <Section className="create-new-personal">
-            <List as={"form"} onSubmit={handleFindPrivateChat}>
-              <ListItem>
-                <input type="text" placeholder="Username" name="username" />
+    <>
+      <Input type="checkbox" id="chat-list-switch" />
+      <Wrapper>
+        <Input type="checkbox" id="private-chats-switch" />
+        <Section>
+          <Title as="label" htmlFor="private-chats-switch">
+            <span>Private</span>
+            <label htmlFor="new-private-toggle">
+              <i className="fas fa-search" />
+            </label>
+          </Title>
+          <>
+            <Input type="checkbox" id="new-private-toggle" />
+            <Section className="create-new-personal">
+              <List as={"form"} onSubmit={handleFindPrivateChat}>
+                <ListItem>
+                  <input type="text" placeholder="Username" name="username" />
+                </ListItem>
+                <ListItem>
+                  <input type="submit" value="Find user" />
+                </ListItem>
+              </List>
+            </Section>
+          </>
+          <List>
+            {privateConversations.map((conversation: Conversation) => (
+              <ListItem
+                key={conversation.id}
+                onClick={() => setActiveConversation(conversation.id)}
+                className={conversation.selected ? "active" : ""}
+              >
+                {
+                  conversation.conversationUsers?.find(
+                    (u) => u.User.id !== user?.id
+                  )?.User.username
+                }
               </ListItem>
-              <ListItem>
-                <input type="submit" value="Find user" />
+            ))}
+          </List>
+        </Section>
+        <Input type="checkbox" id="group-chats-switch" />
+        <Section>
+          <Title as="label" htmlFor="group-chats-switch">
+            <span>Group</span>
+            <label htmlFor="new-group-toggle">
+              <i className="fas fa-search" />
+              |
+              <i className="fas fa-plus" />
+            </label>
+          </Title>
+          <>
+            <Input type="checkbox" id="new-group-toggle" />
+            <Section className="create-new-group">
+              <List as={"form"} onSubmit={handleCreateOrJoinGroup}>
+                <ListItem>
+                  <input type="text" placeholder="Group name" name="group-name" />
+                </ListItem>
+                <ListItem>
+                  <input type="submit" value="Create / Join" />
+                </ListItem>
+              </List>
+            </Section>
+          </>
+          <List>
+            {groupConversations.map((conversation: Conversation) => (
+              <ListItem
+                key={conversation.id}
+                onClick={() => setActiveConversation(conversation.id)}
+                className={conversation.selected ? "active" : ""}
+              >
+                {conversation.name}
+                <i
+                  className="fas fa-trash-alt"
+                  title="Leave group"
+                  onClick={(e) => leaveGroup(e, conversation.id)}
+                />
               </ListItem>
-            </List>
-          </Section>
-        </>
-        <List>
-          {privateConversations.map((conversation: Conversation) => (
-            <ListItem
-              key={conversation.id}
-              onClick={() => setActiveConversation(conversation.id)}
-              className={conversation.selected ? "active" : ""}
-            >
-              {
-                conversation.conversationUsers?.find(
-                  (u) => u.User.id !== user?.id
-                )?.User.username
-              }
-            </ListItem>
-          ))}
-        </List>
-      </Section>
-      <Input type="checkbox" id="group-chats-switch" />
-      <Section>
-        <Title as="label" htmlFor="group-chats-switch">
-          <span>Group</span>
-          <label htmlFor="new-group-toggle">
-            <i className="fas fa-search" />
-            |
-            <i className="fas fa-plus" />
-          </label>
-        </Title>
-        <>
-          <Input type="checkbox" id="new-group-toggle" />
-          <Section className="create-new-group">
-            <List as={"form"} onSubmit={handleCreateOrJoinGroup}>
-              <ListItem>
-                <input type="text" placeholder="Group name" name="group-name" />
-              </ListItem>
-              <ListItem>
-                <input type="submit" value="Create / Join" />
-              </ListItem>
-            </List>
-          </Section>
-        </>
-        <List>
-          {groupConversations.map((conversation: Conversation) => (
-            <ListItem
-              key={conversation.id}
-              onClick={() => setActiveConversation(conversation.id)}
-              className={conversation.selected ? "active" : ""}
-            >
-              {conversation.name}
-              <i
-                className="fas fa-trash-alt"
-                title="Leave group"
-                onClick={(e) => leaveGroup(e, conversation.id)}
-              />
-            </ListItem>
-          ))}
-        </List>
-      </Section>
-    </Wrapper>
+            ))}
+          </List>
+        </Section>
+      </Wrapper>
+    </>
   );
 };
 
@@ -204,11 +207,21 @@ const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  min-width: 200px;
-  width: 200px;
+  min-width: 250px;
+  width: 25%;
   height: 100%;
   border-right: 1px solid #ccc;
   overflow-y: auto;
+  @media screen and (max-width: 900px) {
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    width: min(400px, calc(100vw - 4rem));
+    height: calc(100% - 60px);
+    background-color: #234;
+    z-index: 100;
+  }
 `;
 
 const Section = styled.div`
@@ -236,14 +249,17 @@ const Title = styled.h2`
   width: 100%;
   padding: 0.5rem;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
+  position: relative;
   label {
     border: 1px solid #ccc;
     padding: 0 0.5rem;
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.2s ease-in-out;
+    position: absolute;
+    right: 1rem;
     i {
       font-size: 1rem;
     }
@@ -299,5 +315,8 @@ const Input = styled.input`
     ${List} {
       display: none;
     }
+  }
+  &:checked + ${Wrapper} {
+    display: none;
   }
 `;
