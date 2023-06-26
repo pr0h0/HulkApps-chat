@@ -1,5 +1,6 @@
 const { conversation, conversationUsers, User, message } = require("../models");
 const BaseRepository = require("./base.repository");
+const conversationUserRepository = require("./conversationUser.repository");
 
 class ConversationRepository extends BaseRepository {
   constructor(model) {
@@ -27,18 +28,17 @@ class ConversationRepository extends BaseRepository {
   }
 
   async addUserToConversation(conversationId, userId) {
-    const userAlreadyInConversation = await conversationUsers.findOne({
-      where: {
+    const userAlreadyInConversation =
+      await conversationUserRepository.getUserInConversation(
         conversationId,
-        userId,
-      },
-    });
+        userId
+      );
 
     if (userAlreadyInConversation) {
       return;
     }
 
-    await conversationUsers.create({
+    await conversationUserRepository.create({
       conversationId,
       userId,
     });
@@ -65,77 +65,50 @@ class ConversationRepository extends BaseRepository {
     });
   }
 
-  async getConversations(userId) {
-    const conversations = await conversationUsers.findAll({
+  async getConversationUsers(conversationId) {
+    const conversation = await this.findOne({
       where: {
-        userId,
+        id: conversationId,
       },
-      attributes: ["conversationId"],
+      include: [
+        {
+          model: conversationUsers,
+          include: User,
+        },
+      ],
     });
 
-    const conversationIds = conversations.map((c) => c.conversationId);
+    return conversation.conversationUsers;
+  }
 
-    const conversationsPromise = await Promise.all(
-      conversationIds.map((id) => this.getFullConversation(id))
+  async getConversations(userId) {
+    const conversationsIds =
+      await conversationUserRepository.getUserConversationList(userId);
+
+    const conversationsPromise = Promise.all(
+      conversationsIds.map((id) => this.getFullConversation(id))
     );
 
     return conversationsPromise;
   }
 
-  async removeUserFromConversation(conversationId, userId) {
-    await conversationUsers.update(
-      { deletedAt: new Date() },
-      {
-        where: {
-          conversationId,
-          userId,
-        },
-      }
-    );
-  }
-
   async findPrivateConversation(userId, otherUserId) {
-    const user1Conversations = (
-      await conversationUsers.findAll({
-        where: {
-          userId,
-        },
-        attributes: ["conversationId"],
-        include: {
-          model: conversation,
-          where: {
-            type: "private",
-          },
-        },
-      })
-    ).map((c) => c.conversationId);
-
-    const user2Conversations = (
-      await conversationUsers.findAll({
-        where: {
-          userId: otherUserId,
-        },
-        attributes: ["conversationId"],
-        include: {
-          model: conversation,
-          where: {
-            type: "private",
-          },
-        },
-      })
-    ).map((c) => c.conversationId);
+    const user1Conversations =
+      await conversationUserRepository.getUserPrivateConversationList(userId);
+    const user2Conversations =
+      await conversationUserRepository.getUserPrivateConversationList(
+        otherUserId
+      );
 
     const commonConversations = user1Conversations.filter((c) =>
       user2Conversations.includes(c)
     );
 
-    if (commonConversations.length === 0) {
+    if (!commonConversations?.length) {
       return null;
     }
 
-    const commonConversation = await this.getFullConversation(
-      commonConversations[0]
-    );
+    const commonConversation = this.getFullConversation(commonConversations[0]);
 
     return commonConversation;
   }

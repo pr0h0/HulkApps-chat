@@ -1,7 +1,7 @@
-const asyncWrapper = require("../utils/asyncWrapper");
-const userService = require("../services/user.service");
 const passport = require("passport");
 const jwt = require("jsonwebtoken");
+const asyncWrapper = require("../utils/asyncWrapper");
+const userService = require("../services/user.service");
 
 module.exports = {
   register: asyncWrapper(register),

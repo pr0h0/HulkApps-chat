@@ -51,7 +51,6 @@
 5.  Run `npm run test` to run tests
 6.  Run `npm run db:test:down` to drop database for test environment
 
-
 ## Features implemented
 
 1. User registration
@@ -60,13 +59,13 @@
 4. Real time chat
 5. See online users in chat room
 6. Join / Leave group chat
-8. Send private messages
-9. Rate limit on send message functionality (10 messages per minute)
-10. Unit tests for backend API endpoints
-11. Persistent data storage in Postgres database
-12. Online users storage in Redis
+7. Send private messages
+8. Rate limit on send message functionality (10 messages per minute)
+9. Unit tests for backend API endpoints
+10. Persistent data storage in Postgres database
+11. Online users storage in Redis
 
 ## Features not implemented
+
 1. Dockerization
 2. Message status (seen, delivered, sent)
-

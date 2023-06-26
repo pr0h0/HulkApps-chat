@@ -20,12 +20,12 @@ class UserService extends BaseService {
   async isValidPassword(username, password) {
     const user = await this.findOne({ where: { username } });
     if (!user) {
-      throw HttpError.BadRequest("Invalid username or password");
+      throw HttpError.BadRequest("User not found");
     }
 
     const isValid = await bcryptjs.compare(password, user.password);
     if (!isValid) {
-      throw HttpError.BadRequest("Invalid username or password");
+      throw HttpError.BadRequest("Invalid password");
     }
 
     return true;

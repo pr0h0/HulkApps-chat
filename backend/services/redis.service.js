@@ -3,11 +3,12 @@ const redis = require("redis");
 class RedisService {
   constructor(redisUrl) {
     this.#instance = redis.createClient({ url: redisUrl });
-    this.#instance.connect();
 
     this.#instance.on("error", (err) =>
       console.error("Redis Client Error", err)
     );
+
+    this.#instance.connect();
   }
 
   #instance = null;

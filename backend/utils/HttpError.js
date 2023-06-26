@@ -7,6 +7,9 @@ class HttpError extends Error {
     this.data = data;
   }
 
+  status = 500;
+  data = null;
+
   static BadRequest(msg) {
     return new HttpError({ message: msg, status: 400 });
   }

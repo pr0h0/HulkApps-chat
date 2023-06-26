@@ -1,4 +1,5 @@
 const conversationRepository = require("../repositories/conversation.repository");
+const conversationUserRepository = require("../repositories/conversationUser.repository");
 const userRepository = require("../repositories/user.repository");
 const BaseService = require("./base.service");
 
@@ -55,8 +56,15 @@ class ConversationService extends BaseService {
     return this.#repository.getFullConversation(conversationId);
   }
 
-  async leaveGroup(conversationId, userId) {
-    return this.#repository.removeUserFromConversation(conversationId, userId);
+  getConversationUsers(conversationId) {
+    return this.#repository.getConversationUsers(conversationId);
+  }
+
+  leaveGroup(conversationId, userId) {
+    return conversationUserRepository.removeUserFromConversation(
+      conversationId,
+      userId
+    );
   }
 
   async findOrCreatePrivateChat(username, userId) {

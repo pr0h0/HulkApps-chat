@@ -1,9 +1,10 @@
 const { Server } = require("socket.io");
+const { RateLimiterMemory } = require("rate-limiter-flexible");
+
 const userService = require("./services/user.service");
 const conversationService = require("./services/conversation.service");
 const messageService = require("./services/message.service");
 const redisService = require("./services/redis.service");
-const { RateLimiterMemory } = require("rate-limiter-flexible");
 
 const rateLimiter = new RateLimiterMemory({
   points: 10, // x attempts
@@ -50,7 +51,7 @@ module.exports = function (appServer) {
 
     socket.on(
       "new-message",
-      async ({ message: text, conversationId, userId }, cb) => {
+      async ({ message: text, conversationId, userId }, callback) => {
         try {
           await rateLimiter.consume(userId);
 
@@ -59,7 +60,7 @@ module.exports = function (appServer) {
             conversationId,
             userId
           );
-          cb();
+          callback();
           io.to(`c-${conversationId}`).emit("new-message", message);
         } catch (err) {
           console.log(err);
@@ -71,9 +72,9 @@ module.exports = function (appServer) {
       }
     );
 
-    socket.on("create-or-join-group", async (groupName, cb) => {
+    socket.on("create-or-join-group", async (groupName, callback) => {
       if (!groupName || !groupName.trim()) {
-        return cb({ error: true, message: "Group name is required" });
+        return callback({ error: true, message: "Group name is required" });
       }
 
       const conversation = await conversationService.createGroupConversation(
@@ -85,7 +86,7 @@ module.exports = function (appServer) {
       socket
         .to(`c-${conversation.id}`)
         .emit("new-person", conversation.id, socket.decoded.user);
-      cb(conversation);
+      callback(conversation);
     });
 
     socket.on("get-conversations", async () => {
@@ -95,7 +96,7 @@ module.exports = function (appServer) {
       socket.emit("conversations", conversations);
     });
 
-    socket.on("leave-group", async (conversationId, cb) => {
+    socket.on("leave-group", async (conversationId, callback) => {
       try {
         await conversationService.leaveGroup(
           conversationId,
@@ -105,48 +106,49 @@ module.exports = function (appServer) {
           .to(`c-${conversationId}`)
           .emit("leave-person", conversationId, socket.decoded.user);
         socket.leave(`c-${conversationId}`);
-        cb(true);
+        callback(true);
       } catch (err) {
-        cb(false, err.message);
+        callback(false, err.message);
       }
     });
 
-    socket.on("find-private-chat", async (username, cb) => {
+    socket.on("find-private-chat", async (username, callback) => {
       const conversation = await conversationService.findOrCreatePrivateChat(
         username,
         socket.decoded.user.id
       );
 
-      if (!conversation && cb) {
-        return cb(false);
+      if (!conversation && typeof callback === "function") {
+        return callback(false);
       }
-
-      const userId = conversation.conversationUsers.find(
-        (cu) => cu?.User.id !== socket.decoded.user.id
-      )?.User.id;
 
       if (conversation) {
         socket.join(`c-${conversation.id}`);
+
+        const userId = conversation.conversationUsers.find(
+          (cu) => cu?.User.id !== socket.decoded.user.id
+        )?.User.id;
+
+        io.to(`u-${socket.decoded.user.id}`)
+          .to(`u-${userId}`)
+          .emit("private-chat", conversation);
       }
-      io.to(`u-${socket.decoded.user.id}`)
-        .to(`u-${userId}`)
-        .emit("private-chat", conversation);
     });
 
-    socket.on("check-online", async (conversationId, cb) => {
-      const conversation = await conversationService.getFullConversation(
+    socket.on("check-online", async (conversationId, callback) => {
+      const conversationUsers = await conversationService.getConversationUsers(
         conversationId
       );
 
       const onlineList = [];
-      for (const conversationUser of conversation.conversationUsers) {
+      for (const conversationUser of conversationUsers) {
         const isOnline = await redisService.getUserOnlineStatus(
           conversationUser.User.id
         );
         onlineList.push({ userId: conversationUser.User.id, isOnline });
       }
 
-      cb(onlineList);
+      callback(onlineList);
     });
   });
 };
