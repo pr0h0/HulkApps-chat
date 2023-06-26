@@ -42,7 +42,6 @@
 6.  I have used Sequelize ORM because it makes it easy to manage models and database
 7.  I have used JWT for authentication for authentication because it can be used for both web and mobile applications
 
-
 ## Tests
 
 1.  I have written unit tests for backend using mocha and chai
@@ -51,3 +50,23 @@
 4.  Run `npm run db:test` to create database for test environment
 5.  Run `npm run test` to run tests
 6.  Run `npm run db:test:down` to drop database for test environment
+
+
+## Features implemented
+
+1. User registration
+2. User login
+3. User authentication using JWT
+4. Real time chat
+5. See online users in chat room
+6. Join / Leave group chat
+8. Send private messages
+9. Rate limit on send message functionality (10 messages per minute)
+10. Unit tests for backend API endpoints
+11. Persistent data storage in Postgres database
+12. Online users storage in Redis
+
+## Features not implemented
+1. Dockerization
+2. Message status (seen, delivered, sent)
+
